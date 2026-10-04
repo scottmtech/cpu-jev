@@ -88,23 +88,25 @@ class TestTraceParse(unittest.TestCase):
             "billing was mentioned but the break is the product.",
         )
 
-    def test_two_exact_lines_raise(self) -> None:
-        with self.assertRaises(ParseError):
-            select(
-                _route(),
-                complete=lambda _prompt: "<think>split.</think>\nbilling\nbug",
-            )
+    def test_last_exact_line_is_the_pick(self) -> None:
+        decision = select(
+            _route(),
+            complete=lambda _prompt: "<think>split.</think>\nbilling\nbug",
+        )
+        self.assertEqual(decision.pick, "bug")
+        self.assertEqual(decision.reasoning, "split.")
 
     def test_option_id_case_must_match(self) -> None:
         with self.assertRaises(ParseError):
             select(_route(), complete=lambda _prompt: "<think>capitalized.</think>\nBilling")
 
-    def test_two_ids_in_prose_raise(self) -> None:
-        with self.assertRaises(ParseError):
-            select(
-                _route(),
-                complete=lambda _prompt: "<think>unsure.</think>\nbilling or bug",
-            )
+    def test_last_declared_id_in_prose_is_the_pick(self) -> None:
+        decision = select(
+            _route(),
+            complete=lambda _prompt: "<think>unsure.</think>\nbilling or bug",
+        )
+        self.assertEqual(decision.pick, "bug")
+        self.assertEqual(decision.reasoning, "unsure.")
 
     def test_echoed_option_list_then_stated_choice(self) -> None:
         request = SelectRequest(

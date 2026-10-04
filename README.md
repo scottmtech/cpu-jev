@@ -48,7 +48,7 @@ The runner needs the GGUF file and a CPU llama.cpp backend.
 - `CPU_JEV_GGUF` is the path to `Qwen3-0.6B-Q8_0.gguf`. A directory is accepted when that file sits inside it. If you leave it unset, the runner looks for `models/Qwen3-0.6B-Q8_0.gguf`.
 - `CPU_JEV_LLAMA` is the path to `llama-cli`. If you leave it unset, the runner looks for `llama-cli` on `PATH`.
 
-`llama-cli` is started with `--jinja`, `-ngl 0`, context 2048, and 192 tokens. Sampling follows Qwen3 thinking mode. Temperature is 0.6, top_p is 0.95, top_k is 20, min_p is 0, and presence_penalty is 1.5. The prompt starts with `/think` so Qwen3 thinking mode is on. If `llama-cli` is not available and `llama-cpp-python` is installed, `llama_cpp.Llama` runs with `n_gpu_layers` 0 and the same sampling. If neither backend can load that GGUF, the call raises `RunnerError`.
+`llama-cli` is started with `--jinja`, `-ngl 0`, `--reasoning-format none`, `--reasoning-budget 64`, context 2048, and 192 tokens. Sampling follows Qwen3 thinking mode. Temperature is 0.6, top_p is 0.95, top_k is 20, min_p is 0, and presence_penalty is 1.5. The prompt starts with `/think` so Qwen3 thinking mode is on. If `llama-cli` is not available and `llama-cpp-python` is installed, `llama_cpp.Llama` runs with `n_gpu_layers` 0 and the same sampling. If neither backend can load that GGUF, the call raises `RunnerError`.
 
 ## How the tests compare
 

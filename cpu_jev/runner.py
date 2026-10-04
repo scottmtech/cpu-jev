@@ -136,7 +136,9 @@ def _complete_cli(cli: str, gguf: str, prompt: str) -> str:
         "--reasoning",
         "on",
         "--reasoning-format",
-        "deepseek-legacy",
+        "none",
+        "--reasoning-budget",
+        "64",
         "--chat-template-kwargs",
         json.dumps({"enable_thinking": True}),
         "--simple-io",
@@ -147,6 +149,7 @@ def _complete_cli(cli: str, gguf: str, prompt: str) -> str:
         "--no-escape",
         "--no-warmup",
         "--single-turn",
+        "--log-disable",
         "--prompt",
         prompt,
     ]
@@ -171,7 +174,7 @@ def _complete_cli(cli: str, gguf: str, prompt: str) -> str:
     if proc.stdout.strip() == "":
         detail = (proc.stderr or "").strip()
         raise RunnerError(detail[-2000:] or "llama-cli returned an empty completion")
-    return proc.stdout
+    return _cli_completion(proc.stdout)
 
 
 def _complete_library(gguf: str, prompt: str) -> str:
@@ -216,6 +219,18 @@ def _complete_library(gguf: str, prompt: str) -> str:
     text = _message_text(message)
     if text.strip() == "":
         raise RunnerError("llama-cpp-python returned an empty completion")
+    return text
+
+
+def _cli_completion(stdout: str) -> str:
+    start = stdout.find("<think>")
+    if start < 0:
+        return stdout
+    text = stdout[start:]
+    marker = "\nExiting..."
+    end = text.rfind(marker)
+    if end >= 0:
+        text = text[:end]
     return text
 
 

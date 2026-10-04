@@ -30,6 +30,20 @@ def _gate() -> YesNoRequest:
 
 
 class TestTraceParse(unittest.TestCase):
+    def test_think_after_cli_preamble(self) -> None:
+        decision = select(
+            _route(),
+            complete=lambda _prompt: (
+                "Loading model...\n"
+                "> /think\n"
+                "<think>charged twice, so billing.</think>\n"
+                "billing\n"
+                "Exiting...\n"
+            ),
+        )
+        self.assertEqual(decision.pick, "billing")
+        self.assertEqual(decision.reasoning, "charged twice, so billing.")
+
     def test_exact_option_line_and_think_body(self) -> None:
         decision = select(
             _route(),

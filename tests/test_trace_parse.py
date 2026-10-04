@@ -106,6 +106,39 @@ class TestTraceParse(unittest.TestCase):
                 complete=lambda _prompt: "<think>unsure.</think>\nbilling or bug",
             )
 
+    def test_echoed_option_list_then_stated_choice(self) -> None:
+        request = SelectRequest(
+            state="I upgraded to Pro yesterday but the dashboard still says Free and I got charged. Which one is it?",
+            instructions="Which team should handle this ticket?",
+            options=(
+                Option("billing", "Charges, invoices, and refunds"),
+                Option("technical", "Bugs, outages, and broken features"),
+                Option("account", "Login, password, and profile changes"),
+            ),
+        )
+        completion = (
+            "<think>\n"
+            "Okay, let's see. The user said they upgraded to Pro yesterday but the dashboard still says Free and they got charged. The question is which team to handle this ticket.\n"
+            "\n"
+            "First, I need to understand the issue. Upgrading to Pro means they changed their account type, right? But if the dashboard shows Free</think>\n"
+            "\n"
+            "option: billing: Charges, invoices, and refunds\n"
+            "technical: Bugs, outages, and broken features\n"
+            "account: Login, password, and profile changes\n"
+            "\n"
+            "The user upgraded to Pro but the dashboard is still Free. That suggests there might be a conflict between their account change (Pro) and the current status (Free). The charges being made might indicate that the system still has invoices or unresolved issues. \n"
+            "\n"
+            "Since the problem is about the billing or charges being affected, the correct team would be billing. But I need to check if the technical team can handle it. If there's a bug related to the dashboard not reflecting\n"
+        )
+        decision = select(request, complete=lambda _prompt: completion)
+        self.assertEqual(decision.pick, "billing")
+        self.assertEqual(
+            decision.reasoning,
+            "Okay, let's see. The user said they upgraded to Pro yesterday but the dashboard still says Free and they got charged. The question is which team to handle this ticket.\n"
+            "\n"
+            "First, I need to understand the issue. Upgrading to Pro means they changed their account type, right? But if the dashboard shows Free",
+        )
+
     def test_lookalike_word_is_not_a_pick(self) -> None:
         with self.assertRaises(ParseError):
             select(

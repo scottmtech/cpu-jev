@@ -1,0 +1,14 @@
+{
+  "state": "Customer: I was charged twice and nobody has replied for 3 days.",
+  "questions": {
+    "route": {
+      "type": "choice",
+      "instructions": "Where should this go?",
+      "criteria": {
+        "billing": "money",
+        "bug": "broken",
+        "account": "login"
+      }
+    }
+  }
+}

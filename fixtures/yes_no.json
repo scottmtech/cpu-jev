@@ -1,0 +1,9 @@
+{
+  "state": "Customer: I was charged twice and nobody has replied for 3 days.",
+  "questions": {
+    "escalate": {
+      "type": "noul",
+      "instructions": "Escalate to a human now?"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+[project]
+name = "cpu-jev"
+version = "0.1.0"
+description = "CPU select and yes or no calls from a local Qwen3 GGUF."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = []
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["cpu_jev*"]
